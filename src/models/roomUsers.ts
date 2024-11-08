@@ -1,10 +1,12 @@
 import mongoose from "mongoose";
+import User from "./userModel";
+import Room from "./roomModel";
 
 const roomUserSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: User,
       required: true,
     },
     socketid: {
@@ -17,7 +19,7 @@ const roomUserSchema = new mongoose.Schema(
     },
     roomId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Room",
+      ref: Room,
       required: true,
     },
     role: {

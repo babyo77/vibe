@@ -8,7 +8,8 @@ export const formatArtistName = (artists: artists[]) => {
       }
       return `${data.name}, ${data.name}`;
     })
-    .join("");
+    .join("")
+    .split(",")[0];
 };
 export function formatElapsedTime(seconds: number): string {
   if (isNaN(seconds) || seconds < 0) {
@@ -39,11 +40,10 @@ export const setCookie = (name: string, value: string) => {
 };
 
 export const isImageUrl = (url: string): boolean => {
-  return (
-    /^https?:\/\/.*\.(jpg|jpeg|png|gif|webp|bmp|svg|tiff|ico|heic|heif|jfif|pjpeg|pjp)$/i.test(
-      url
-    ) || /^https?:\/\/.*\/.*(\?.*)?(#.*)?$/i.test(url)
-  ); // Handle URLs that might return images without extensions
+  // Only match URLs that end with known image file extensions
+  return /^https?:\/\/.*\.(jpg|jpeg|png|gif|webp|bmp|svg|tiff|ico|heic|heif|jfif|pjpeg|pjp)$/i.test(
+    url
+  );
 };
 export const linkifyOptions = {
   target: "_blank",
@@ -80,3 +80,16 @@ export const pauseVariants = {
   visible: { y: 0, transition: springConfig }, // Spring-based movement
   exit: { y: 20, transition: springConfig }, // Exits downwards with spring effect
 };
+
+export const slideInVariants = {
+  hidden: { y: "-100%", opacity: 0 },
+  visible: { y: 0, opacity: 1 },
+  exit: { y: "-100%", opacity: 0 },
+};
+
+export function containsOnlyEmojis(text: string): boolean {
+  const emojiRegex =
+    //@ts-expect-error:expected
+    /^(?:[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F900}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{24C2}\u{2B50}\u{2B55}\u{2934}\u{2935}\u{3297}\u{3299}\u{203C}-\u{2049}\u{FE0F}])+$/u;
+  return emojiRegex.test(text);
+}

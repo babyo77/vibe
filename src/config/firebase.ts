@@ -3,14 +3,13 @@ import { initializeApp } from "firebase/app";
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: "image--match.firebaseapp.com",
-  projectId: "image--match",
-  storageBucket: "image--match.appspot.com",
-  messagingSenderId: "449732647565",
-  appId: "1:449732647565:web:1c74984b6f7882274ea0c4",
-  measurementId: "G-N6M0SXHL2C",
+  authDomain: "vibe-d49bd.firebaseapp.com",
+  projectId: "vibe-d49bd",
+  storageBucket: "vibe-d49bd.appspot.com",
+  messagingSenderId: "285843330561",
+  appId: "1:285843330561:web:f751510d7f43d583c95200",
+  measurementId: "G-D9Y2W9GQF6",
 };
-
 export const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth();

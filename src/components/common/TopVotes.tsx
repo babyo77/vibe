@@ -39,6 +39,7 @@ function TopVotes({ song }: { song: searchResults }) {
               >
                 <Avatar className="size-5 border border-white">
                   <AvatarImage
+                    loading="lazy"
                     alt={voter?.name}
                     height={200}
                     width={200}

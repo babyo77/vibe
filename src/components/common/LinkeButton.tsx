@@ -1,8 +1,9 @@
 "use client";
 
-import { socket } from "@/app/socket";
-import { useUserContext } from "@/app/store/userStore";
+import { useUserContext } from "@/store/userStore";
 import useDebounce from "@/Hooks/useDebounce";
+import { useSocket } from "@/Hooks/useSocket";
+import { emitMessage } from "@/lib/customEmits";
 import { Heart } from "lucide-react";
 import { useCallback, useEffect, useRef } from "react";
 
@@ -15,7 +16,8 @@ const LikeButton: React.FC<LikeButtonProps> = ({
   hearts = [],
   maxSize = 40,
 }) => {
-  const { user, likEffectUser: users, setLikEffectUser } = useUserContext();
+  const { user } = useUserContext();
+  const { setLikEffectUser, likEffectUser: users } = useSocket();
   const heartRef = useRef<SVGSVGElement>(null);
   const handleClick = useCallback(
     (event: React.MouseEvent) => {
@@ -112,7 +114,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({
 
   const emitHeart = useDebounce(() => {
     if (user?.imageUrl) {
-      socket.emit("heart", { imageUrl: user.imageUrl });
+      emitMessage("heart", { imageUrl: user.imageUrl });
     }
   }, 400);
 

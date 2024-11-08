@@ -31,6 +31,9 @@ const nextConfig = {
     SPOTIFY_REDIRECT_URL: process.env.SPOTIFY_REDIRECT_URL,
     SOCKET_URI: process.env.SOCKET_URI,
     COOKIES: process.env.COOKIES,
+    LOCK_SECRET: process.env.LOCK_SECRET,
+    STREAM_URL: process.env.STREAM_URL,
+    GLOBAL_BACKEND_URI: process.env.GLOBAL_BACKEND_URI,
   },
 };
 

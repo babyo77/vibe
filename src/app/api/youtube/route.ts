@@ -1,23 +1,14 @@
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import { encrypt } from "tanmayo7lock";
 import ytpl from "ytpl";
-import jwt from "jsonwebtoken";
 export async function GET(req: NextRequest) {
   const id = req.nextUrl.searchParams.get("id");
-  const roomID = req.nextUrl.searchParams.get("room");
-  const session = cookies().get("vibeId");
-  if (!session || !session.value) {
-    throw new Error("No session found");
-  }
-  const decoded: any = jwt.verify(session.value, process.env.JWT_SECRET || "");
-  if (!decoded || !decoded.userId) {
-    throw new Error("Invalid token");
-  }
+
   if (!id) throw new Error("Invalid song ID");
-  if (!roomID) throw new Error("Invalid room ID");
   try {
     const playlist = await ytpl(id, {
-      pages: 1,
+      pages: 2,
+      requestOptions: { headers: { Cookie: process.env.COOKIES || "" } },
     });
     if (!playlist.items) throw new Error("Invalid playlist");
     const tracks = playlist.items.map((s) => ({
@@ -35,7 +26,6 @@ export async function GET(req: NextRequest) {
           },
         ],
       },
-      addedBy: decoded.userId,
       image: [
         {
           quality: "500x500",
@@ -48,7 +38,7 @@ export async function GET(req: NextRequest) {
       downloadUrl: [
         {
           quality: "320kbps",
-          url: `https://sstream.onrender.com/stream/${s.id}`,
+          url: `${encrypt(s.id)}`,
         },
       ],
     }));

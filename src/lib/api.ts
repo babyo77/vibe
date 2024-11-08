@@ -7,6 +7,12 @@ export interface ApiResponse<T> {
   error?: string;
 }
 
+let authToken: string | null = null; // Variable to store the auth token
+
+const setAuthToken = (token: string | null) => {
+  authToken = token;
+};
+
 const handleResponse = async <T>(
   response: Response
 ): Promise<ApiResponse<T>> => {
@@ -14,7 +20,9 @@ const handleResponse = async <T>(
     .get("content-type")
     ?.includes("application/json");
   if (response.status === 404) {
-    toast.error("Not Found");
+    toast.error("Not Found", {
+      style: { background: "#e94625" },
+    });
     return {
       success: false,
       status: response.status,
@@ -36,7 +44,9 @@ const handleResponse = async <T>(
         ? error.msg
         : "Something went wrong";
 
-    toast.error(errorMessage);
+    toast.error(errorMessage, {
+      style: { background: "#e94625" },
+    });
     console.error("API call failed:", errorMessage);
 
     return {
@@ -57,7 +67,11 @@ const handleResponse = async <T>(
 
 const handleError = (error: any): ApiResponse<never> => {
   const errorMessage = error.message || "An error occurred";
-  toast.error(errorMessage);
+  if (error.name !== "AbortError") {
+    toast.error(errorMessage, {
+      style: { background: "#e94625" },
+    });
+  }
   console.error("API call failed:", errorMessage);
 
   return {
@@ -68,6 +82,8 @@ const handleError = (error: any): ApiResponse<never> => {
 };
 
 const api = {
+  setAuthToken, // Add setAuthToken method to the api object
+
   request: async <T>(
     url: string,
     method: string,
@@ -82,10 +98,16 @@ const api = {
         options.body = JSON.stringify(options.body);
       }
 
+      // Set Authorization header if authToken is available
+      if (authToken) {
+        headers.set("Authorization", `Bearer ${authToken}`);
+      }
+
       const response = await fetch(url, {
         method,
         ...options,
-        next: { revalidate: Infinity },
+        credentials: "include",
+        next: { revalidate: 10 },
         headers,
       });
 

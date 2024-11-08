@@ -1,37 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Vibe - Let Your Votes Choose the Beat
 
-## Getting Started
+[![Website](https://img.shields.io/website-up-down-green-red/https/getvibe.in.svg)](https://getvibe.in)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/tanmay11117/vibe/pulls)
 
-First, run the development server:
+Vibe is a **collaborative music platform** where your votes shape the playlist. Join a community-driven experience to discover and influence the music that plays. Vote for your favorite tracks and enjoy a dynamic, ever-changing listening journey!
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Vote-Based Playlists**: Let your votes determine the next song.
+- **Trending Tracks**: Stay up-to-date with what's hot and popular in the music world.
+- **Personalized Experience**: The more you engage, the more tailored the playlist becomes.
+- **Real-Time Interaction**: Watch your votes make an immediate impact on the playlist.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🌟 Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Frontend**: [Next.js](https://nextjs.org/) (React)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **State Management**: Custom hooks, Context API
+- **Backend**: Node.js, Express
+- **Database**: MongoDB
+- **Third-Party Integrations**:
+  - Google Analytics
+  - Google Tag Manager
+- **Real-Time Updates**: [Socket.IO](https://socket.io/) for real-time voting and playlist updates
 
-## Learn More
+## 📦 Installation
 
-To learn more about Next.js, take a look at the following resources:
+1. Clone the repository:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# vibe
+   ```bash
+   git clone https://github.com/tanmay11117/vibe.git
+   cd vibe

@@ -3,12 +3,17 @@ import React from "react";
 
 function Footer() {
   return (
-    <footer className="border max-xl:w-9/12 max-lg:w-11/12 max-md:hidden backdrop-blur-lg  select-none w-7/12 p-3 rounded-xl px-5 z-40 border-[#49454F] flex items-center justify-between ">
+    <footer className="border max-xl:w-11/12  max-sm:w-full max-lg:w-11/12 max-md:hidden backdrop-blur-lg  select-none w-7/12 p-3 rounded-xl px-5 z-40 border-[#49454F] flex items-center justify-between ">
       <div className=" flex -ml-1 text-2xl font-semibold gap-2">
         <p className=" mt-2">Just</p>{" "}
         <span>
-          {" "}
-          <Image src={"/logo.svg"} alt="logo" height={45} width={45} />
+          <Image
+            src={"/logo.svg"}
+            alt="logo"
+            height={45}
+            className=" size-10"
+            width={45}
+          />
         </span>
         <p className=" mt-2">together.</p>
       </div>
@@ -26,7 +31,7 @@ function Footer() {
         <p>
           Designed by{" "}
           <a
-            href="https://www.instagram.com/justcrazzyxd/"
+            href="https://www.instagram.com/fixing_x/"
             target="_blank"
             className="underline-offset-2 hover:underline"
           >

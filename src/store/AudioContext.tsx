@@ -13,8 +13,8 @@ import React, {
   SetStateAction,
 } from "react";
 import { useUserContext } from "./userStore";
-import { socket } from "../socket";
-import useDebounce from "@/Hooks/useDebounce";
+import { socket } from "@/app/socket";
+import { emitMessage } from "@/lib/customEmits";
 
 interface AudioContextType {
   play: (song: searchResults) => void;
@@ -36,6 +36,10 @@ interface AudioContextType {
   setProgress: React.Dispatch<SetStateAction<number>>;
   isLooped: boolean;
   setLoop: React.Dispatch<SetStateAction<boolean>>;
+  shuffled: boolean;
+  setShuffled: React.Dispatch<SetStateAction<boolean>>;
+  videoRef: React.RefObject<HTMLAudioElement> | undefined;
+  backgroundVideoRef: React.RefObject<HTMLAudioElement> | undefined;
 }
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
@@ -56,6 +60,8 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   const audioRef = useRef<HTMLAudioElement>(
     typeof window !== "undefined" ? new Audio() : null
   );
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const backgroundVideoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [currentSong, setCurrentSong] = useState<searchResults | null>(null);
@@ -63,19 +69,27 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   const [currentDuration, setDuration] = useState<number>(0);
   const [currentVolume, setVolume] = useState<number>(1);
   const [isLooped, setLoop] = useState<boolean>(false);
-  const { queue, isConnected } = useUserContext();
+  const [shuffled, setShuffled] = useState<boolean>(false);
+  const { queue } = useUserContext();
   const progress = useMemo(() => currentProgress, [currentProgress]);
   const duration = useMemo(() => currentDuration, [currentDuration]);
   const volume = useMemo(() => currentVolume, [currentVolume]);
-
+  const { user } = useUserContext();
   // play
   const play = useCallback((song: searchResults) => {
     setCurrentSong(song);
+    const audioUrl = song?.downloadUrl[song?.downloadUrl?.length - 1]?.url;
     if (audioRef.current) {
-      audioRef.current.src = song.downloadUrl[song.downloadUrl.length - 1].url;
+      audioRef.current.src = audioUrl?.startsWith("http")
+        ? audioUrl
+        : `${process.env.STREAM_URL}/${audioUrl}`;
       audioRef.current
         .play()
         .then(async () => {
+          if (videoRef.current && backgroundVideoRef.current) {
+            videoRef.current.play();
+            backgroundVideoRef.current.play();
+          }
           setIsPlaying(true);
         })
         .catch(() => {
@@ -88,6 +102,10 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   const pause = useCallback(() => {
     if (audioRef.current) {
       audioRef.current.pause();
+      if (videoRef.current && backgroundVideoRef.current) {
+        backgroundVideoRef.current.pause();
+        videoRef.current.pause();
+      }
     }
     setIsPlaying(false);
   }, []);
@@ -98,6 +116,10 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       audioRef.current
         .play()
         .then(() => {
+          if (videoRef.current && backgroundVideoRef.current) {
+            backgroundVideoRef.current.play();
+            videoRef.current.play();
+          }
           setIsPlaying(true);
         })
         .catch((error) => {
@@ -145,24 +167,27 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   // seek
   const seek = useCallback((value: number) => {
     if (audioRef.current) {
+      if (videoRef.current && backgroundVideoRef.current) {
+        videoRef.current.currentTime = value;
+        backgroundVideoRef.current.currentTime = value;
+      }
       audioRef.current.currentTime = value;
-      socket.emit("seek", value);
     }
   }, []);
 
   // Play the next song in the queue
   const playNext = useCallback(() => {
-    if (isConnected) {
-      socket.emit("nextSong", { nextSong: currentSong });
+    if (socket.connected) {
+      emitMessage("playNext", "playNext");
     }
-  }, [currentSong, isConnected]);
+  }, []);
 
   // Play the previous song in the queue
   const playPrev = useCallback(() => {
-    if (isConnected) {
-      socket.emit("prevSong", { prevSong: currentSong });
+    if (socket.connected) {
+      emitMessage("playPrev", "playPrev");
     }
-  }, [currentSong, isConnected]);
+  }, []);
 
   // Set media session metadata and event handlers
   const setMediaSession = useCallback(() => {
@@ -183,50 +208,52 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       navigator.mediaSession.setActionHandler("previoustrack", playPrev);
       navigator.mediaSession.setActionHandler("nexttrack", playNext);
       navigator.mediaSession.setActionHandler("seekto", (e) => {
-        if (e.seekTime) {
+        if (e.seekTime && user?.role == "admin") {
           seek(e.seekTime);
+          if (videoRef.current) {
+            videoRef.current.currentTime = e.seekTime;
+          }
         }
       });
       navigator.mediaSession.setActionHandler("seekbackward", handleBlock);
       navigator.mediaSession.setActionHandler("seekforward", handleBlock);
     }
-  }, [currentSong, playNext, playPrev, pause, resume, seek]);
+  }, [currentSong, playNext, playPrev, pause, resume, seek, user]);
 
   // Debounced function to emit progress
 
-  const [lastEmittedTime, setLastEmittedTime] = useState(0);
-
-  const emitProgress = useDebounce((currentTime: number) => {
-    if (socket && socket.connected) {
-      socket.emit("progress", currentTime);
-    } else {
-      console.warn("Socket not connected. Unable to emit progress.");
-    }
-  }, 1000);
+  const lastEmittedTime = useRef(0);
+  const lastEmitted = useRef(0);
 
   useEffect(() => {
     const handlePlay = () => setIsPlaying(true);
     const handlePause = () => setIsPlaying(false);
     const handleCanPlay = () => {
       setMediaSession();
+      if (audioRef.current) {
+        setDuration(audioRef.current.duration);
+      }
     };
 
     const handleEnd = () => {
-      if (isLooped) {
-        socket.emit("nextSong", { nextSong: currentSong });
-      } else {
-        socket.emit("songEnded", currentSong);
-      }
+      emitMessage("songEnded", "songEnded");
     };
     const updateProgress = () => {
       if (audioRef.current) {
         const currentTime = audioRef.current.currentTime;
-        setProgress(currentTime);
-        setDuration(audioRef.current.duration);
-        if (Math.abs(currentTime - lastEmittedTime) >= 15) {
-          // 10 second threshold
-          emitProgress(currentTime);
-          setLastEmittedTime(currentTime);
+
+        if (Math.abs(currentTime - lastEmittedTime.current) >= 1.04) {
+          setProgress(currentTime);
+          if (videoRef.current && backgroundVideoRef.current) {
+            videoRef.current.currentTime = currentTime;
+            backgroundVideoRef.current.currentTime = currentTime;
+          }
+          lastEmittedTime.current = currentTime;
+        }
+
+        if (Math.abs(currentTime - lastEmitted.current) >= 7) {
+          socket.emit("progress", currentTime);
+          lastEmitted.current = currentTime;
         }
       }
     };
@@ -246,22 +273,19 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
         audioElement.removeEventListener("timeupdate", updateProgress);
       };
     }
-  }, [
-    setMediaSession,
-    currentSong,
-    play,
-    queue,
-    playNext,
-    isLooped,
-    emitProgress,
-    lastEmittedTime,
-  ]);
+  }, [setMediaSession, lastEmitted, lastEmittedTime]);
 
   useEffect(() => {
-    if (!currentSong && queue.length > 0) {
-      play(queue[0]);
+    if (!currentSong && queue.length > 0 && audioRef.current) {
+      setCurrentSong(queue[0]);
+
+      const audioUrl =
+        queue[0]?.downloadUrl[queue[0]?.downloadUrl?.length - 1]?.url;
+      audioRef.current.src = audioUrl?.startsWith("http")
+        ? audioUrl
+        : `${process.env.STREAM_URL}/${audioUrl}`;
     }
-  }, [queue, play, currentSong]);
+  }, [queue, currentSong]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -308,6 +332,10 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       duration,
       isLooped,
       setLoop,
+      shuffled,
+      setShuffled,
+      videoRef,
+      backgroundVideoRef,
     }),
     [
       play,
@@ -326,6 +354,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       seek,
       duration,
       isLooped,
+      shuffled,
     ]
   );
   return (

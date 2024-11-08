@@ -2,28 +2,29 @@ import dbConnect from "@/lib/dbConnect";
 import User from "@/models/userModel";
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import { User as userType } from "firebase/auth";
+import { spotifyUser } from "@/lib/types";
 
 const jwt_secret = process.env.JWT_SECRET || "";
 
 export async function POST(req: NextRequest) {
   try {
-    const data: userType = await req.json();
     await dbConnect();
+    const data: spotifyUser = await req.json();
+
     const isAlready = await User.findOne({ email: data.email });
     if (isAlready) {
       const user = await User.findOneAndUpdate(
         { email: data.email },
-        { imageUrl: data.photoURL, name: data.providerData[0].displayName },
+        { imageUrl: data.images[0].url, name: data.display_name },
         { new: true }
       );
       return proceed(isAlready, user);
     } else {
       const user = await User.create({
         username: data.email?.split("@gmail.com")[0],
-        name: data.providerData[0].displayName,
+        name: data.display_name,
         email: data.email,
-        imageUrl: data.photoURL,
+        imageUrl: data.images[0].url,
       });
 
       if (user) {
@@ -33,7 +34,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: false, data: {} }, { status: 500 });
   } catch (error: any) {
-    console.log(error);
+    console.log(error.message);
 
     return NextResponse.json(
       { success: false, data: {}, message: error?.message },
