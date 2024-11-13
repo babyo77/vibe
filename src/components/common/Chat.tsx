@@ -152,12 +152,13 @@ function Chat({
         <X onClick={() => setIsChatOpen(false)} className=" cursor-pointer" />
       </div>
       <div className="  h-full hide-scrollbar overflow-y-scroll px-5 pb-4 flex flex-col justify-between ">
-        <div
-          ref={messagesEndRef}
-          className=" flex-grow gap-4 flex hide-scrollbar flex-col py-6 overflow-y-scroll"
-        >
+        <div className=" flex-grow gap-4 flex hide-scrollbar flex-col py-6 overflow-y-scroll">
           {messages.map((message) => (
-            <div title={message?.time} key={message?.message}>
+            <div
+              ref={messagesEndRef}
+              title={message?.time}
+              key={message?.message}
+            >
               {message.user._id !== user?._id ? (
                 <div className=" flex gap-2">
                   <Avatar className="size-9">

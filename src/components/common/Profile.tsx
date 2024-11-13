@@ -23,7 +23,7 @@ function Profile({ user, roomId }: { user: TUser; roomId?: string }) {
 
   useEffect(() => {
     console.log(
-      "%cVibe is Sexy",
+      "%cVibe developed by Tanmay and designed by Ajay",
       "color: #D0BCFF; font-size: 20px; padding: 10px; border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);"
     );
     setUser(user);
@@ -114,7 +114,7 @@ function Profile({ user, roomId }: { user: TUser; roomId?: string }) {
               <DialogDescription />
             </DialogHeader>
             <div className="  w-[316px] h-[414px]  flex items-center justify-center">
-              <div className="flex flex-col bg-gradient-to-t to-[#FFFFFF]/20 overflow-hidden from-black/20  p-5 items-center justify-center w-[20rem] rounded-2xl">
+              <div className="flex flex-col bg-gradient-to-t to-[#FFFFFF]/20 overflow-hidden from-black/50  p-5 items-center justify-center w-[20rem] rounded-2xl">
                 <Avatar className="size-24">
                   <AvatarImage
                     width={500}

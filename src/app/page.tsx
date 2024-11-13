@@ -8,6 +8,7 @@ import api from "@/lib/api";
 import React, { useState } from "react";
 import { LoaderCircle } from "lucide-react";
 import useDebounce from "@/Hooks/useDebounce";
+import Login from "@/components/common/Login";
 function Page() {
   const [loader, setLoader] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,8 +25,8 @@ function Page() {
       return;
     }
 
-    if (roomName.length > 8) {
-      setError("Name is too large, maximum 8 characters");
+    if (roomName.length > 11) {
+      setError("Name is too large, maximum 11 characters");
       return;
     }
     if (!isValidRoomId) {
@@ -55,8 +56,8 @@ function Page() {
       return;
     }
 
-    if (roomName.length > 8) {
-      setError("Name is too large, maximum 8 characters");
+    if (roomName.length > 11) {
+      setError("Name is too large, maximum 11 characters");
       return;
     }
     if (!isValidRoomId) {
@@ -78,7 +79,7 @@ function Page() {
       setError(res?.error);
     }
   };
-  const handleCheckRoom = useDebounce(checkRoom, 1000);
+  const handleCheckRoom = useDebounce(checkRoom, 200);
   return (
     <div className="  bg-[url('/mask.svg')] bg-no-repeat bg-cover ">
       <Blur className=" blur-2xl bg-transparent" />
@@ -134,8 +135,8 @@ function Page() {
                 <input
                   min={4}
                   autoFocus
-                  maxLength={8}
-                  max={8}
+                  maxLength={11}
+                  max={11}
                   onInput={(e) => setRoomName(e.currentTarget.value)}
                   onChange={handleCheckRoom}
                   placeholder="claim your vibe"
@@ -143,7 +144,9 @@ function Page() {
                 />
               </div>
               <Button
-                disabled={loader || typeof error === "string"}
+                disabled={
+                  loader || typeof error === "string" || roomName.length === 0
+                }
                 type="submit"
                 className="h-10 w-20 bg-white rounded-lg flex-col justify-center items-center gap-2 inline-flex"
               >
@@ -154,6 +157,8 @@ function Page() {
             <p className="h-4 text-red-500 font-normal text-xs -mt-2 px-1">
               {error}
             </p>
+            {typeof window !== "undefined" &&
+              !window.location.pathname.includes("/make") && <Login footer />}
           </div>
           <div className=" w-1/2  max-md:w-full">
             <video

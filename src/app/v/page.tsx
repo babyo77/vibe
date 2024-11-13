@@ -39,6 +39,8 @@ export async function generateMetadata({
     openGraph: {
       images: [
         {
+          width: 736,
+          height: 464,
           url:
             "https://getvibe.in/api/og?image=" +
               user?.imageUrl +
