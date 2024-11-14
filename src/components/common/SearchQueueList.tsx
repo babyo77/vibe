@@ -11,6 +11,7 @@ import parse from "html-react-parser";
 import { MdDone } from "react-icons/md";
 import VoteIcon from "./VoteIcon";
 import { emitMessage } from "@/lib/customEmits";
+import Image from "next/image";
 function SearchQueueList({
   searchQu,
   isDeleting = false,
@@ -24,7 +25,7 @@ function SearchQueueList({
 }) {
   const [queue, setQueue] = useState<searchResults[]>(searchQu || []);
   const { user } = useUserContext();
-  const { currentSong } = useAudio();
+  const { currentSong, isPlaying } = useAudio();
 
   const upVote = useCallback((song: searchResults) => {
     emitMessage("upvote", { queueId: song?.queueId });
@@ -118,8 +119,8 @@ function SearchQueueList({
   return (
     <>
       {queue?.length > 0 ? (
-        <div className=" py-2 pr-2 border-b-2 group-hover:opacity-100 flex flex-col overflow-y-scroll gap-1">
-          <p className=" font-medium">Search Result</p>
+        <div className=" py-2 pr-2 group-hover:opacity-100 flex flex-col overflow-y-scroll gap-1">
+          <p className=" font-medium">Search Results</p>
           {queue?.map((song, i) => (
             <div
               title={
@@ -146,14 +147,41 @@ function SearchQueueList({
                       alt={song.name}
                       height={500}
                       width={500}
-                      className="rounded-md object-cover group-hover:opacity-40 "
+                      className={`rounded-md object-cover group-hover:opacity-40 ${
+                        currentSong?.id == song.id && "opacity-70"
+                      }`}
                       src={song.image[song.image.length - 1].url}
                     />
                     <AvatarFallback>SX</AvatarFallback>
                     <Trash
                       onClick={() => handleDelete(song)}
-                      className="absolute cursor-pointer top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      className="absolute group-hover:z-20 cursor-pointer top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                     />
+                    {currentSong?.id == song.id && (
+                      <div className="absolute cursor-pointer top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 group-hover:opacity-0 transition-opacity duration-300">
+                        {isPlaying ? (
+                          <Image
+                            height={100}
+                            width={100}
+                            src="/bars.gif"
+                            alt={song?.name}
+                            className=" h-full w-full"
+                          />
+                        ) : (
+                          <svg
+                            className=" h-full w-full"
+                            viewBox="0 0 14 14"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M3.99902 14H5.99902V0H3.99902V14ZM-0.000976562 14H1.99902V4H-0.000976562V14ZM12 7V14H14V7H12ZM8.00002 14H10V10H8.00002V14Z"
+                              fill="#F08FFB"
+                            />
+                          </svg>
+                        )}
+                      </div>
+                    )}
                   </Avatar>
                 </div>
                 <div
@@ -197,6 +225,7 @@ function SearchQueueList({
           Search in queue
         </p>
       )}
+      <p className=" font-medium">In Queue</p>
     </>
   );
 }

@@ -1,6 +1,6 @@
 {
-  "theme_color": "#000000",
-  "background_color": "#000000",
+  "theme_color": "#121212",
+  "background_color": "#121212",
   "icons": [
     {
       "purpose": "maskable",
@@ -17,9 +17,12 @@
   ],
   "orientation": "portrait",
   "display": "standalone",
-  "dir": "auto",
-  "lang": "en-US",
   "name": "Vibe",
+  "start_url": "https://getvibe.in/?utm_source=pwa_install",
+  "scope": "https://getvibe.in/",
   "short_name": "Vibe",
-  "description": "vibe on your favourite songs with your friends"
+  "description": "vibe on your favourite songs with your friends",
+  "edge_side_panel": {
+    "preferred_width": 800
+  }
 }

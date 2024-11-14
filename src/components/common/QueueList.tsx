@@ -168,16 +168,18 @@ function QueueList({
                   alt={song.name}
                   height={500}
                   width={500}
-                  className={`rounded-md object-cover group-hover:opacity-40  ${
+                  className={`rounded-md object-cover group-hover:opacity-40 ${
                     currentSong?.id == song.id && "opacity-70"
                   }`}
                   src={song.image[song.image.length - 1].url}
                 />
                 <AvatarFallback>SX</AvatarFallback>
-                <Trash
-                  onClick={() => handleDelete(song)}
-                  className="absolute group-hover:z-20 cursor-pointer top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                />
+                {!isDeleting && (
+                  <Trash
+                    onClick={() => handleDelete(song)}
+                    className="absolute group-hover:z-20 cursor-pointer top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  />
+                )}
                 {currentSong?.id == song.id && (
                   <div className="absolute cursor-pointer top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 group-hover:opacity-0 transition-opacity duration-300">
                     {isPlaying ? (

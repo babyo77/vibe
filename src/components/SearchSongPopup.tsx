@@ -38,7 +38,7 @@ function SearchSongPopup({
   const [page, setPage] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const { ref, inView } = useInView();
-  const { roomId, user, setQueue } = useUserContext();
+  const { roomId, user } = useUserContext();
   const [query, setQuery] = useState<string>("");
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -58,8 +58,8 @@ function SearchSongPopup({
       const controller = new AbortController();
       abortControllerRef.current = controller;
       const url = youtube
-        ? `${process.env.SOCKET_URI}/api/youtube?id=${extractPlaylistID(value)}`
-        : `${process.env.SOCKET_URI}/api/search/?name=${value}&page=0`;
+        ? `${process.env.SEARCH_API}/api/youtube?id=${extractPlaylistID(value)}`
+        : `${process.env.SEARCH_API}/api/search/?name=${value}&page=0`;
 
       setPage(0); // Reset page on a new search
       setLoading(true);
@@ -84,14 +84,14 @@ function SearchSongPopup({
     [youtube]
   );
 
-  const handleSearch = useDebounce(search);
+  const handleSearch = useDebounce(search, 400);
 
   const searchMoreSongs = useCallback(async () => {
     if (!query || !songs || songs.data.results.length >= songs.data.total)
       return;
 
     setLoading(true);
-    const url = `${process.env.SOCKET_URI}/api/search/?name=${query}&page=${
+    const url = `${process.env.SEARCH_API}/api/search/?name=${query}&page=${
       page + 1
     }`;
 
@@ -132,28 +132,12 @@ function SearchSongPopup({
       { credentials: "include" }
     );
     if (added.success) {
-      await setQueue((prev) => {
-        // Create a Set with IDs from the previous queue to track unique songs
-        const songIds = new Set(prev.map((song) => song.id));
-
-        // Filter new results to include only songs not already in the queue
-        const uniqueNewSongs = (selectedSongs || []).filter((song) => {
-          if (!songIds.has(song.id)) {
-            songIds.add(song.id); // Add new song ID to Set
-            return true;
-          }
-          return false;
-        });
-
-        // Update the queue with only unique songs
-        return [...prev, ...uniqueNewSongs];
-      });
       emitMessage("update", "update");
       toast.success("Songs added to queue");
     }
     setSelectedSongs([]);
     toast.dismiss("adding");
-  }, [setSelectedSongs, selectedSongs, user, roomId, setQueue]);
+  }, [setSelectedSongs, selectedSongs, user, roomId]);
 
   const handleAddAll = useCallback(async () => {
     if (songs && songs?.data.results.length > 0) {

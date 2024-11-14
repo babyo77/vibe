@@ -23,6 +23,7 @@ interface UserContextType {
   upNextSongs: searchResults[];
   showVideo: boolean | null;
   setShowVideo: React.Dispatch<SetStateAction<boolean | null>>;
+  isAdminOnline: React.MutableRefObject<boolean>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -32,6 +33,7 @@ const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [queue, setQueue] = React.useState<searchResults[]>([]);
   const [upNextSongs, setUpNextSongs] = React.useState<searchResults[]>([]);
   const [user, setUser] = React.useState<TUser | null>(null);
+  const isAdminOnline = React.useRef<boolean>(true);
   const [listener, setListener] = React.useState<listener | null>(null);
   const [showVideo, setShowVideo] = React.useState<boolean | null>(() => {
     const data =
@@ -56,8 +58,9 @@ const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       setListener,
       setUpNextSongs,
       upNextSongs,
+      isAdminOnline,
     }),
-    [listener, queue, roomId, user, upNextSongs, showVideo]
+    [listener, queue, roomId, user, upNextSongs, showVideo, isAdminOnline]
   );
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

@@ -66,6 +66,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
     setUpNextSongs,
     setUser,
     roomId,
+    isAdminOnline,
   } = useUserContext();
   const { seek, play } = useAudio();
   const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -238,7 +239,9 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
     const controller = new AbortController();
     queueControllerRef.current = controller;
     const data = await api.get(
-      `${process.env.SOCKET_URI}/api/queue?page=1&room=${roomId}&limit=${queue.length}&name`,
+      `${process.env.SOCKET_URI}/api/queue?page=1&room=${roomId}&limit=${
+        queue.length > 70 ? queue.length : 70
+      }&name`,
       {
         headers: {
           nocache: "no-cache",
@@ -306,10 +309,8 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
     currentSocket.on("userJoinedRoom", handleUserJoinedRoom);
     currentSocket.on("joined", handleJoined);
     currentSocket.on("update", forceUpdateQueue);
-    currentSocket.on(
-      "isplaying",
-      (d) => d && document.visibilityState == "visible" && play(decrypt(d))
-    );
+    currentSocket.on("seekable", (r) => (isAdminOnline.current = r));
+    currentSocket.on("isplaying", (d) => d && play(decrypt(d)));
     currentSocket.on("play", (d) => d && play(decrypt(d)));
     currentSocket.on("seek", seek);
     return () => {
@@ -323,6 +324,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
       currentSocket.off("userJoinedRoom", handleUserJoinedRoom);
       currentSocket.off("update", forceUpdateQueue);
       currentSocket.off("joined", handleJoined);
+      currentSocket.off("seekable");
       currentSocket.off("isplaying");
       currentSocket.off("play");
       currentSocket.off("seek", seek);
@@ -340,6 +342,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
     forceUpdateQueue,
     play,
     seek,
+    isAdminOnline,
   ]);
 
   return (

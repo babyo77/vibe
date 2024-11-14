@@ -87,7 +87,7 @@ const handleError = (
   return {
     success: false,
     status: 0, // Indicate that this is a client-side error without a response status
-    error: errorMessage,
+    error: error.name == "AbortError" ? "" : errorMessage,
   };
 };
 

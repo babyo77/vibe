@@ -4,7 +4,7 @@ import { Search, Trash2, X } from "lucide-react";
 import QueueList from "./QueueList";
 import { useUserContext } from "@/store/userStore";
 import SearchSongPopup from "../SearchSongPopup";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Input } from "../ui/input";
 import { motion } from "framer-motion";
 import { slideInVariants } from "@/utils/utils";
@@ -17,7 +17,7 @@ import { emitMessage } from "@/lib/customEmits";
 import SearchQueueList from "./SearchQueueList";
 import InviteFriends from "./InviteFriends";
 
-function AddToQueue() {
+function AddToQueueComp() {
   const { queue, roomId, user, setQueue } = useUserContext();
   const { total } = useSocket();
 
@@ -204,5 +204,5 @@ function AddToQueue() {
     </div>
   );
 }
-
+const AddToQueue = React.memo(AddToQueueComp);
 export default AddToQueue;

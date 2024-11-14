@@ -36,6 +36,7 @@ const nextConfig = {
     GLOBAL_BACKEND_URI: process.env.GLOBAL_BACKEND_URI,
     VIDEO_STREAM_URI: process.env.VIDEO_STREAM_URI,
     BACKGROUND_STREAM_URI: process.env.BACKGROUND_STREAM_URI,
+    SEARCH_API: process.env.SEARCH_API,
   },
 };
 

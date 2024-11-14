@@ -5,7 +5,7 @@ import HomeFooter from "@/components/common/HomeFooter";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import api from "@/lib/api";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { LoaderCircle } from "lucide-react";
 import useDebounce from "@/Hooks/useDebounce";
 import Login from "@/components/common/Login";
@@ -13,6 +13,7 @@ function Page() {
   const [loader, setLoader] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [roomName, setRoomName] = useState<string>("");
+  const roomNameRef = useRef<AbortController | null>(null);
   const checkRoom = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const roomName = e.target.value;
@@ -34,10 +35,16 @@ function Page() {
       return;
     }
     setLoader(true);
+    if (roomNameRef.current) {
+      roomNameRef.current.abort();
+    }
+    const controller = new AbortController();
+    roomNameRef.current = controller;
     const res = await api.get(
       `${process.env.SOCKET_URI}/api/checkroom?r=${roomName}`,
       {
         showErrorToast: false,
+        signal: controller.signal,
       }
     );
     setLoader(false);
@@ -65,9 +72,14 @@ function Page() {
       return;
     }
     setLoader(true);
+    if (roomNameRef.current) {
+      roomNameRef.current.abort();
+    }
+    const controller = new AbortController();
+    roomNameRef.current = controller;
     const res = await api.get(
       `${process.env.SOCKET_URI}/api/checkroom?r=${roomName}`,
-      { showErrorToast: false }
+      { showErrorToast: false, signal: controller.signal }
     );
     if (res.success) {
       window.location.href = `/${roomName}`;
@@ -137,6 +149,7 @@ function Page() {
                   autoFocus
                   maxLength={11}
                   max={11}
+                  value={roomName}
                   onInput={(e) => setRoomName(e.currentTarget.value)}
                   onChange={handleCheckRoom}
                   placeholder="claim your vibe"
