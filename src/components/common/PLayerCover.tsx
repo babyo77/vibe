@@ -83,8 +83,8 @@ function PLayerCoverComp() {
             emitMessage("songEnded", "songEnded");
           }}
           opts={{
-            height: '300',
-            width: '300',
+            height: '10',
+            width: '10',
             playerVars: {
               origin:
                 typeof window !== "undefined" ? window.location.origin : "",
