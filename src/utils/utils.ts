@@ -103,10 +103,10 @@ const EXPIRE_TIME = 10 * 60 * 60 * 1000; // 1 hour in milliseconds
 export const cacheVideo = async (url: string, id: string): Promise<string> => {
   try {
     if (!url || !id) return "";
-    console.log(
-      "%cVibe",
-      "color: #D0BCFF; font-size: 20px; padding: 10px; border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);"
-    );
+    // console.log(
+    //   "%cVibe",
+    //   "color: #D0BCFF; font-size: 20px; padding: 10px; border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);"
+    // );
 
     const db = await openDatabase();
     const transaction = db.transaction("videos", "readonly");
@@ -143,7 +143,7 @@ export const cacheVideo = async (url: string, id: string): Promise<string> => {
       getRequest.onerror = () => reject(getRequest.error);
     });
   } catch (error) {
-    console.error("Error caching video:", error);
+    // console.error("Error caching video:", error);
     return "";
   }
 };

@@ -104,7 +104,7 @@ function QueueListComp({
           }
         });
       } catch (error) {
-        console.log(error);
+        // console.log(error);
       }
     },
     [handleUpVote, setQueue, user, currentSong]

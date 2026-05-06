@@ -149,8 +149,8 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   const play = useCallback(async (song: searchResults) => {
     dispatch({ type: "SET_CURRENT_SONG", payload: song });
     if (song.source == "youtube" && playerRef.current) {
-      console.log("playing youtube");
-      console.log(playerRef.current);
+        // console.log("playing youtube");
+        // console.log(playerRef.current);
 
       try {
         const videoId = getVideoId(song);
@@ -164,18 +164,18 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
           //@ts-expect-error:expect error
           playerRef.current?.setVolume(storedVolume * 200);
 
-          console.log("loading and playing youtube");
+            // console.log("loading and playing youtube");
         } else {
-          console.error("Invalid or missing video ID");
+            // console.error("Invalid or missing video ID");
         }
       } catch (error) {
-        console.error("Error playing YouTube video:", error);
+          // console.error("Error playing YouTube video:", error);
       }
     }
 
     // Continue with audio handling
     if (audioRef.current) {
-      console.log("setting audio src");
+        // console.log("setting audio src");
       audioRef.current.src = "";
       const currentVideoUrl = getURL(song);
 
@@ -185,7 +185,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
           //@ts-expect-error:expect error
           if (playerRef.current) playerRef.current?.pauseVideo();
         } catch (error) {
-          console.error("Error pausing YouTube player:", error);
+            // console.error("Error pausing YouTube player:", error);
         }
       } else {
         return;
@@ -197,7 +197,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
           dispatch({ type: "SET_IS_PLAYING", payload: true });
         })
         .catch(async (e) => {
-          console.error("Error playing audio", e.message);
+            // console.error("Error playing audio", e.message);
         });
     }
   }, []);
@@ -221,7 +221,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
           dispatch({ type: "SET_IS_PLAYING", payload: true });
         })
         .catch((error) => {
-          console.error("Error resuming audio:", error);
+            // console.error("Error resuming audio:", error);
         });
     }
   }, [state.currentSong, socketRef]);
@@ -234,13 +234,13 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
           //@ts-expect-error:demo
           playerRef.current.pauseVideo();
           if (state.currentProgress) {
-            console.log("seeking to", state.currentProgress);
+              // console.log("seeking to", state.currentProgress);
             //@ts-expect-error:demo
             playerRef.current.seekTo(state.currentProgress);
           }
           dispatch({ type: "SET_IS_PLAYING", payload: false });
         } catch (error) {
-          console.error("Error pausing YouTube player:", error);
+            // console.error("Error pausing YouTube player:", error);
         }
       }
       pause();
@@ -253,12 +253,12 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
             //@ts-expect-error:demo
             playerRef.current.playVideo();
             if (state.currentProgress) {
-              console.log("seeking to", state.currentProgress);
+                // console.log("seeking to", state.currentProgress);
               //@ts-expect-error:demo
               playerRef.current.seekTo(state.currentProgress);
             }
           } catch (error) {
-            console.error("Error playing YouTube video:", error);
+              // console.error("Error playing YouTube video:", error);
           }
         }
       }
@@ -317,10 +317,10 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
           //@ts-expect-error:demo
           playerRef.current.seekTo(value, true);
         } catch (error) {
-          console.error("Error seeking YouTube player:", error);
+            // console.error("Error seeking YouTube player:", error);
         }
       }
-      console.log("seeking to", value);
+        // console.log("seeking to", value);
 
       dispatch({ type: "SET_PROGRESS", payload: value });
 
