@@ -166,7 +166,7 @@ function Chat({
     const controller = new AbortController();
     controllerRef.current = controller;
     const response = await api.get<any>(
-      `https://tenor.googleapis.com/v2/search?q=${searchTerm}&key=AIzaSyDv9pWityxOON42ciQ3MrmVedu32pZ2TWE&limit=50`,
+      `https://api.klipy.com/v2/search?q=${searchTerm}&key=0Jtxr3jTQEJE70UZdPkUu2HeLSiirssW2nl0FxrXJ3QZjF5fLfVs9B9GiDioIS4H&limit=50`,
       {
         signal: controllerRef.current?.signal,
         showErrorToast: false,
