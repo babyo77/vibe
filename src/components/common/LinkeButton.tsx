@@ -145,7 +145,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({
       if (likedRef.current) return;
       const id = user._id.trim().slice(-11);
       if (!id) return;
-      // console.log(id);
+      console.log(id);
 
       const add = await api.post(
         `${process.env.SOCKET_URI}/api/add?room=${id}`,

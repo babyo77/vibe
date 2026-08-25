@@ -266,7 +266,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
       const resetUrl = setTimeout(() => {
         window.history.replaceState(null, "", `/v?room=${roomId}`);
       }, 40000);
-      // console.log("joined");
+      console.log("joined");
 
       seek(value?.progress || 0);
       dispatch({ type: "SET_SEEK", payload: value?.progress || 0 });
@@ -285,31 +285,33 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
     const handlePlay = (data: any) => {
       const song = decrypt(data) as searchResults;
       if (!song) {
-        // console.log("[AutoPlay] No song data received");
+        console.log("[AutoPlay] No song data received");
         return;
       }
 
-      // console.log("[AutoPlay] Received play event:");
+      console.log("[AutoPlay] Received play event:");
 
       if (!isPlaying) {
-        // console.log("[AutoPlay] Setting current song with existing audio element");
+        console.log(
+          "[AutoPlay] Setting current song with existing audio element"
+        );
         setCurrentSong(song);
         setProgress(0);
 
-          if (audioRef.current) {
+        if (audioRef.current) {
           audioRef.current.src = getURL(song).replace(
             process.env.VIDEO_STREAM_URI || "",
             // window.navigator.userAgent.includes("Electron")
             //   ? "http://localhost:7777/stream"
             process.env.STREAM_URL || ""
           );
-          // console.log("[AutoPlay] New audio source set:", audioRef.current.src);
+          console.log("[AutoPlay] New audio source set:", audioRef.current.src);
  // playerRef.current?.loadVideoById(song?.downloadUrl?.at(-1)?.url || "");
         }
         return;
       }
       if (data) {
-        // console.log("[AutoPlay] Calling play() function for song");
+        console.log("[AutoPlay] Calling play() function for song");
         play(song);
       }
     };

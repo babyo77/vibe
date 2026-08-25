@@ -6,7 +6,7 @@ export async function GET(req: NextRequest) {
     cookies().delete("vibeId");
     return NextResponse.redirect(new URL("/v", req.nextUrl));
   } catch (error) {
-    // console.log(error);
+    console.log(error);
     return NextResponse.json({ error: error }, { status: 500 });
   }
 }

@@ -43,7 +43,7 @@ function AddToQueueComp() {
           primaryArtistName.includes(query.toLowerCase())
         );
       });
-      // console.log("Local Search Results:", localSearch);
+      console.log("Local Search Results:", localSearch);
       if (localSearch.length > 0) {
         setSearchQu(localSearch);
         return;

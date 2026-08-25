@@ -18,7 +18,7 @@ export async function getLoggedInUser() {
 
     return data;
   } catch (error: any) {
-    // console.error("Error in getLoggedInUser:", error.message);
+    console.error("Error in getLoggedInUser:", error.message);
     return null;
   }
 }
