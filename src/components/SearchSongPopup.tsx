@@ -322,10 +322,10 @@ function SearchSongPopupComp({
             </DialogTrigger>
           ) : (
             <DialogTrigger className="flex-col hidden md:flex w-full h-full text-[#EADDFF] justify-center border-none items-center">
-              <p className="text-[#B489FF] font-bold text-4xl ">
+              <p className="text-[#B489FF] font-bold text-xl ">
                 {user?.name?.split(" ")[0]},
               </p>
-              <p className=" font-semibold mt-1.5 text-3xl">
+              <p className=" font-medium mt-1.5 text-xl">
                 Looks like Your <br />
                 queue is empty.
               </p>
